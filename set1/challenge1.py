@@ -10,7 +10,7 @@ from lantern.util import group
 
 def hex2base64(hex_string):
     """Encode a hex string into base64"""
-    return b64encode(bytearray.fromhex(hex_string)).decode("utf-8")
+    return b64encode(bytearray.fromhex(hex_string)).decode('utf-8')
 
 
 def hex2base64_custom(hex_string):
@@ -18,7 +18,7 @@ def hex2base64_custom(hex_string):
     Encode a hex string into base64 without using the base64 library
     https://tools.ietf.org/html/rfc3548.html#section-3
     """
-    alphabet = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=")
+    alphabet = list('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=')
 
     # Split hex string into bytes, then group into threes
     bytes = [int(byte, 16) for byte in group(hex_string, 2)]
@@ -41,8 +41,8 @@ def hex2base64_custom(hex_string):
 
     return ''.join(alphabet[index] for index in indexes)
 
-string = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
-result = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
+string = '49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d'
+result = 'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'
 
 assert hex2base64(string) == result
 assert hex2base64_custom(string) == result
