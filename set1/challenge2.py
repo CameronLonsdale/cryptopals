@@ -9,8 +9,7 @@ from binascii import hexlify
 
 
 def xor(a, b):
-    """XOR two equal length buffers"""
-    assert len(a) == len(b)
+    """XOR two equal buffers (longest truncated)"""
     return hexlify(bytes([c ^ d for c, d in zip(a, b)])).decode('utf-8')
 
 assert xor(
