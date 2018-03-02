@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Fixed XOR
 https://cryptopals.com/sets/1/challenges/2
