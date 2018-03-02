@@ -10,7 +10,8 @@ import string
 
 from challenge2 import xor
 from base64 import b64decode
-from lantern.fitness import ChiSquared, english
+from lantern.fitness import ChiSquared
+from lantern.analysis import frequency
 from lantern.structures import Decryption
 from lantern.util import group, split_columns, combine_columns, remove
 
@@ -46,13 +47,17 @@ decryptions = []
 for keysize in range(2, 40):
     blocks = group(ciphertext, keysize)
     first, second = blocks[0], blocks[1]
-    edit_distance = hamming_distance(bytearray_to_bits(first), bytearray_to_bits(second)) / keysize
+    edit_distance = hamming_distance(bytearray_to_bits(first), bytearray_to_bits(second)) / keysize 
     decryption = Decryption(key=keysize, plaintext=(first, second), score=edit_distance)
     decryptions.append(decryption)
 
 decryptions = sorted(decryptions)
 keysize = decryptions[0].key
 
+for d in decryptions:
+    print("{}: {}".format(d.key, d.score))
+
+keysize = 29
 
 def is_printable(s):
     return all(c in string.printable for c in s)
@@ -74,16 +79,13 @@ def modified_xor_brute(ciphertext):
         except UnicodeDecodeError:
             continue
         else:
-            # test = remove(plaintext.upper(), string.whitespace + string.punctuation)
-            # print(test)
-            print(plaintext)
-
             if not is_printable(plaintext):
                 continue
 
-            score = ChiSquared(english.unigrams)(remove(plaintext.upper(), string.whitespace + string.punctuation))
-
+            # Due to the limitations of ChiSquared we need to make the plaintext uppercase and without whitespace + punctuation
+            score = ChiSquared(frequency.english.unigrams)(remove(plaintext, string.whitespace + string.punctuation).upper())
             decryption = Decryption(plaintext, key, score)
+
             # This is a (flaw?) in lantern that punct + whitespace is removed when scoring, however because the score
             # calculation is based on length, this means that incorrect strings full of punctuation can out score
             # correct decryptions with mostly letters. Therefore, we modify the score by how many characters were
@@ -95,7 +97,6 @@ def modified_xor_brute(ciphertext):
 
 # Given the keysize, we can reduce repeated xor to N instances of single byte xor where N is the length of the key
 # The text when decrypted will not be adjacent, therefore another statistical model will be used in order to score it
-columns = split_columns(ciphertext, keysize)
-bests_columns = [modified_xor_brute(column)[0].plaintext for column in columns]
-print(combine_columns(bests_columns))
-
+# columns = split_columns(ciphertext, keysize)
+# bests_columns = [modified_xor_brute(column)[0].plaintext for column in columns]
+# print(combine_columns(bests_columns))
