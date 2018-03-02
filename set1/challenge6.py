@@ -46,18 +46,21 @@ decryptions = []
 # we can keep track of the lowest edit distance through comparisons and then use that as an indicator of the correct key size
 for keysize in range(2, 40):
     blocks = group(ciphertext, keysize)
-    first, second = blocks[0], blocks[1]
-    edit_distance = hamming_distance(bytearray_to_bits(first), bytearray_to_bits(second)) / keysize 
-    decryption = Decryption(key=keysize, plaintext=(first, second), score=edit_distance)
+
+    # 10 blocks is enough of an average to make the correct keysize appear on top
+    NUM_BLOCKS = 10
+    edit_distance = sum(hamming_distance(bytearray_to_bits(blocks[i]), bytearray_to_bits(blocks[i + 1])) for i in range(NUM_BLOCKS))
+    edit_distance /= (NUM_BLOCKS * keysize)
+
+    decryption = Decryption(key=keysize, plaintext='', score=edit_distance)
     decryptions.append(decryption)
 
 decryptions = sorted(decryptions)
 keysize = decryptions[0].key
 
-for d in decryptions:
-    print("{}: {}".format(d.key, d.score))
+# for d in decryptions:
+#     print("{}: {}".format(d.key, d.score))
 
-keysize = 29
 
 def is_printable(s):
     return all(c in string.printable for c in s)
@@ -97,6 +100,6 @@ def modified_xor_brute(ciphertext):
 
 # Given the keysize, we can reduce repeated xor to N instances of single byte xor where N is the length of the key
 # The text when decrypted will not be adjacent, therefore another statistical model will be used in order to score it
-# columns = split_columns(ciphertext, keysize)
-# bests_columns = [modified_xor_brute(column)[0].plaintext for column in columns]
-# print(combine_columns(bests_columns))
+columns = split_columns(ciphertext, keysize)
+bests_columns = [modified_xor_brute(column)[0].plaintext for column in columns]
+print(combine_columns(bests_columns))
