@@ -214,9 +214,16 @@ ciphertexts = [
 
 from lantern.util import group
 from collections import Counter
+from Crypto.Cipher import AES
+from binascii import hexlify
+
+
+def detect_ecb(ciphertext: bytearray, block_size=AES.block_size):
+    """Needs lots of ciphertext to have repeating blocks"""
+    counter = Counter(hexlify(block) for block in group(ciphertext, block_size))
+    # If blocks are repeated then it is a good sign that ECB mode was used
+    return max(counter.values()) > 1
 
 for ciphertext in ciphertexts:
-    counter = Counter(group(ciphertext, 32))
-    # If blocks are repeated then it is a good sign that ECB mode was used
-    if max(counter.values()) > 1:
+    if detect_ecb(bytearray.fromhex(ciphertext)):
         print("ECB detected: {}".format(ciphertext))
