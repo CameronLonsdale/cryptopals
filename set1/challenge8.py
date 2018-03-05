@@ -224,6 +224,6 @@ def detect_ecb(ciphertext: bytearray, block_size=AES.block_size):
     # If blocks are repeated then it is a good sign that ECB mode was used
     return max(counter.values()) > 1
 
-for ciphertext in ciphertexts:
-    if detect_ecb(bytearray.fromhex(ciphertext)):
-        print("ECB detected: {}".format(ciphertext))
+# for ciphertext in ciphertexts:
+#     if detect_ecb(bytearray.fromhex(ciphertext)):
+#         print("ECB detected: {}".format(ciphertext))
