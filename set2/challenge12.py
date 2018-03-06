@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+"""
+Byte-at-a-time ECB decryption (Simple)
+https://cryptopals.com/sets/2/challenges/12
+"""
+
 import os
 from base64 import b64decode
 from Crypto.Cipher import AES
