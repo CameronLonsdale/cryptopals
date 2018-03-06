@@ -64,4 +64,4 @@ def break_ecb():
 
     return unknown_string
 
-print(break_ecb().decode("utf-8"))
+print("AES ECB Unknown string:\n{}".format(break_ecb().decode("utf-8")))
