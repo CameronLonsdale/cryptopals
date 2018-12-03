@@ -8,7 +8,7 @@ https://cryptopals.com/sets/2/challenges/10
 from base64 import b64decode
 from Crypto.Cipher import AES
 from lantern.util import group
-from challenge9 import pad
+from .challenge9 import pad
 from set1.challenge2 import xor
 
 

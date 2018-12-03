@@ -36,10 +36,12 @@ def get_token() -> Tuple[str, str]:
     ]
     plaintext =  base64.b64decode(random.choice(strings))
     iv = os.urandom(AES.block_size)
+    print(pad(plaintext))
     return cbc_encrypt(plaintext, ENCRYPTION_KEY, iv), iv
 
 def validate_token(ciphertext, iv):
-    plaintext = cbc_decrypt(ciphertext, ENCRYPTION_KEY, iv).decode('utf-8')
+    plaintext = bytes(cbc_decrypt(ciphertext, ENCRYPTION_KEY, iv))
+    print(plaintext)
     try: 
         validate_padding(plaintext)
         return True
@@ -47,5 +49,17 @@ def validate_token(ciphertext, iv):
         return False
 
 
-ciphertext, iv = get_token()
-print(validate_token(ciphertext, iv))
+# ciphertext, iv = get_token()
+# print(validate_token(ciphertext, iv))
+# print(base64.b64encode(ciphertext))
+
+def crack():
+    # Plaintext
+    #b'000009ith my rag-top down so my hair can blow\x03\x03\x03'
+    # Ciphertext
+    ciphertext = base64.b64decode("NL+QJ7R7l10wMiW0kjgKHfvUI8TlekUFyS1VPFSNAkMZsVOmpZotgN9Y0FQQm6Z8")
+    iv = bytearray(b"\x00" * 16)
+    print(validate_token(ciphertext, iv))
+
+#crack()
+
